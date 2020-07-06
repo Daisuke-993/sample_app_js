@@ -4,9 +4,61 @@
     <title>index</title>
   </head>
   <body>
-    <form action="/post" method="post">
-        <input type="text" name="city" >
+    <form id="form" action="/post" method="post" onsubmit="ajax(); return false;">
+        <input class="city" type="text" name="city" >
         <input type="submit">
     </form>
+
+    <table border=1 id="weather">
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Weather</th>
+                <th>Temperature</th>
+                <th>Wind Speed</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    <script>
+        function ajax(){
+        var req = new XMLHttpRequest();
+        var form = document.getElementById("form");
+        req.open(form.method, form.action, true);
+        req.responseType = 'json';
+        var formData = JSON.stringify({'city' : form.city.value});
+        req.send(formData);
+        req.onreadystatechange = function(){
+
+            if(req.readyState === 4 && req.status === 200){
+
+                var table = document.getElementById("weather");
+                var row = table.insertRow(1);
+                var json = JSON.parse(req.response);
+                var city = row.insertCell(0);
+                city.innerHTML = form.city.value;
+                var weather = row.insertCell(1);
+                weather.innerHTML = json.weather[0].main;
+                var temperature = row.insertCell(2);
+                temperature.innerHTML = json.main.temp;
+                var windSpeed = row.insertCell(3);
+                windSpeed.innerHTML = json.wind.speed;
+                var now = new Date();
+                var month = now.getMonth() + 1;
+                var day = now.getDate();
+                var hour = now.getHours();
+                var min = now.getMinutes();
+                var date = row.insertCell(4);
+                date.innerHTML = month + "/" + day + "  " + hour + ":" + min;
+                form.city.value = null;
+                console.log(json);
+            }
+    }
+}
+    </script>
   </body>
 </html>
