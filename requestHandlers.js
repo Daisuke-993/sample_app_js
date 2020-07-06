@@ -1,10 +1,16 @@
 var handle = {};
+var fs = require("fs");
 
 handle['/'] = function index(response) {
   console.log("Request handler 'index' was called.");
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write("This is Index page");
-  response.end();
+  function res(err, data){
+    if(!err){
+      response.writeHead(200, {"Content-Type": "text/html"});
+      response.write(data);
+      response.end();
+    }
+  }
+  fs.readFile('public/index.html', res);
 }
 
 handle['/start'] = function start(response) {
